@@ -7,8 +7,8 @@ import java.net.Socket;
 
 public class ServerThreadThread extends Thread
 {
-    private ServerThread serverThread;
-    private Socket socket;
+    private final ServerThread serverThread;
+    private final Socket socket;
     private PrintWriter pw;
 
     public ServerThreadThread(Socket socket, ServerThread serverThread)

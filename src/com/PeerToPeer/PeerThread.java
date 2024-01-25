@@ -10,7 +10,7 @@ import java.net.Socket;
 
 public class PeerThread extends Thread
 {
-    private BufferedReader bf;
+    private final BufferedReader bf;
     public PeerThread(Socket socket) throws IOException
     {
         bf = new BufferedReader(new InputStreamReader(socket.getInputStream()));

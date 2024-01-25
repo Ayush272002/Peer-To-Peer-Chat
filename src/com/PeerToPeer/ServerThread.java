@@ -7,8 +7,8 @@ import java.util.Set;
 
 public class ServerThread extends Thread
 {
-    private ServerSocket serverSocket;
-    private Set<ServerThreadThread> serverThreadThreads  = new HashSet<>();
+    private final ServerSocket serverSocket;
+    private final Set<ServerThreadThread> serverThreadThreads  = new HashSet<>();
 
     public ServerThread(String portNumber) throws IOException
     {
@@ -16,22 +16,36 @@ public class ServerThread extends Thread
     }
 
     @Override
-    public void run()
-    {
+    public void run() {
         try
         {
-            while(true)
+            while (!Thread.interrupted())
             {
                 ServerThreadThread serverThreadThread = new ServerThreadThread(serverSocket.accept(), this);
                 serverThreadThreads.add(serverThreadThread);
                 serverThreadThread.start();
             }
         }
-        catch (Exception e)
+        catch (IOException e)
         {
-            System.out.println(e.getMessage());
+            if (!serverSocket.isClosed())
+                System.out.println("ServerSocket accept error: " + e.getMessage());
+
+        }
+        finally
+        {
+            // Close the server socket when the loop exits
+            try
+            {
+                serverSocket.close();
+            }
+            catch (IOException e)
+            {
+                System.out.println("Error closing server socket: " + e.getMessage());
+            }
         }
     }
+
 
     void sendMessages(String message)
     {
@@ -43,10 +57,5 @@ public class ServerThread extends Thread
         {
             System.out.println(e.getMessage());
         }
-    }
-
-    public Set<ServerThreadThread> getServerThreadThreads()
-    {
-        return serverThreadThreads;
     }
 }
